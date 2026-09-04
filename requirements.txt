@@ -1,0 +1,6 @@
+# Dependencias del cliente
+pygame-ce>=2.5,<3
+pygame_gui>=0.6,<1
+
+# Herramientas de desarrollo de spritesheets
+Pillow>=10,<12

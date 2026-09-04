@@ -10,7 +10,7 @@ from client.config import (
 from client.scenes.scene import Scene
 from client.simulation_clock import SimulationClock
 from client.ui.debug_hud import render_hud
-
+from client.rendering.grid_renderer import render_grid
 
 class WorldScene(Scene):
     """Temporary scene for the active world and simulation."""
@@ -35,6 +35,8 @@ class WorldScene(Scene):
         self.pause_button = self._create_button("Pause", 0)
         self.speed_plus_one_button = self._create_button("Speed +1", 1)
         self.speed_minus_one_button = self._create_button("Speed -1", 2)
+
+        self.selected_cell = None
 
     def _create_button(self, text: str, index: int) -> pygame_gui.elements.UIButton:
         button_width, button_height = self.BUTTON_SIZE
@@ -78,6 +80,11 @@ class WorldScene(Scene):
             self.simulation.is_running = True
             self._update_pause_button_text()
 
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            self.selected_cell = event.pos
+
+
+
     def _update_pause_button_text(self) -> None:
         text = "Pause" if self.simulation.is_running else "Resume"
         self.pause_button.set_text(text)
@@ -100,6 +107,7 @@ class WorldScene(Scene):
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.fill(BACKGROUND_COLOR)
+        render_grid(screen)
 
         render_hud(
             screen=screen,

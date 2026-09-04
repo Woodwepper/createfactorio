@@ -1,0 +1,19 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Cachés de Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Paquetes generados
+*.egg-info/
+build/
+dist/
+
+# Configuración local del editor y del sistema
+.vscode/
+.idea/
+.DS_Store

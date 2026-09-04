@@ -4,7 +4,7 @@ Lista de continuidad para retomar el proyecto después de una pausa.
 
 ## Estado actual
 
-La aplicación ya tiene una ventana Pygame-ce, escenas, menú principal, transición a un mundo nuevo, HUD, ticks, pausa y velocidades de `x1` a `x10`.
+La aplicación ya tiene una ventana Pygame-ce, escenas, menú principal, transición a un mundo nuevo, HUD, ticks, pausa, velocidades de `x1` a `x10` y una cuadrícula visible en `WorldScene`.
 
 ## Próximo objetivo: cerrar el flujo visual básico
 
@@ -19,9 +19,9 @@ La aplicación ya tiene una ventana Pygame-ce, escenas, menú principal, transic
 
 ## Slice visual 1: mapa placeholder
 
-- [ ] Crear una cuadrícula visible en `WorldScene`.
-- [ ] Separar el renderizado de la cuadrícula en `client/rendering/grid_renderer.py`.
-- [ ] Mostrar coordenadas o una celda seleccionada.
+- [X] Crear una cuadrícula visible en `WorldScene`.
+- [X] Separar el renderizado de la cuadrícula en `client/rendering/grid_renderer.py`.
+- [ ] Convertir el clic del ratón a coordenadas de celda y mostrar la celda seleccionada.
 - [ ] Añadir una primera representación placeholder de un nodo de recursos.
 
 ## Slice de órdenes

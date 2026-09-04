@@ -693,7 +693,7 @@ Al retomar el proyecto, comenzar por leer este archivo y resumir únicamente:
 
 ---
 
-## 16. Cierre de la sesión actual
+## 16. Cierre de la sesión del 2026-09-03
 
 Fecha de referencia: 2026-09-03.
 
@@ -755,3 +755,57 @@ La aplicación y las escenas se validaron mediante compilación e imports. La ve
 ### Nota de continuidad
 
 El repositorio anterior se conserva como referencia histórica. El desarrollo activo se está reconstruyendo de forma incremental, manteniendo la separación entre lógica y cliente.
+
+---
+
+## 17. Cierre de la sesión actual
+
+Fecha de referencia: 2026-09-04.
+
+### Trabajo realizado
+
+- Se declaró `requirements.txt` con `pygame-ce`, `pygame_gui` y `Pillow`.
+- Se creó `.gitignore` para excluir `.venv`, cachés de Python y archivos generados.
+- Se creó `README.md` con instrucciones para configurar el entorno en Linux, macOS y Windows.
+- Se creó `tools/setup_venv.py` para crear o reutilizar `.venv`, actualizar `pip` e instalar las dependencias.
+- Se añadieron `GRID_CELL_SIZE` y `GRID_COLOR` a `client/config.py`.
+- Se creó `client/rendering/grid_renderer.py` para dibujar líneas de cuadrícula.
+- Se integró `render_grid(screen)` en `WorldScene.draw()` después de pintar el fondo y antes del HUD y la interfaz.
+- Se inició el manejo del clic del ratón en `WorldScene` guardando la posición recibida en `selected_cell`.
+
+### Estado funcional actual
+
+El flujo actual es:
+
+```text
+abrir aplicación
+→ MainMenuScene
+→ pulsar Create world
+→ crear World y Simulation
+→ cambiar a WorldScene
+→ mostrar cuadrícula y HUD
+→ ejecutar ticks
+→ pausar o cambiar velocidad
+```
+
+La cuadrícula está integrada como renderizado del cliente. La selección todavía no representa una coordenada de celda: por ahora conserva la posición del ratón en píxeles y aún no se dibuja visualmente.
+
+### Pendientes inmediatos
+
+- Convertir `event.pos` a coordenadas de celda usando `GRID_CELL_SIZE`.
+- Mostrar o resaltar la celda seleccionada.
+- Añadir una primera representación placeholder de un nodo de recursos.
+- Implementar la primera orden real dentro de un mundo existente, probablemente `PlaceBuildingOrder`.
+- Crear `ItemStack`, `Inventory` y `Container`.
+
+### Entorno de desarrollo
+
+Cada máquina de desarrollo debe crear su propio entorno virtual local:
+
+```text
+python3 tools/setup_venv.py
+→ . .venv/bin/activate
+→ python main.py
+```
+
+En Windows se utiliza `py -3 tools\setup_venv.py` y `.venv\Scripts\Activate.ps1`. La carpeta `.venv` no se versiona.
