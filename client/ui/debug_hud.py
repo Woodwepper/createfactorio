@@ -15,6 +15,9 @@ def render_hud(
     current_speed: int,
     accumulated_time: float,
     fps: float,
+    selected_cell: tuple[int, int] | None,
+    hovered_cell: tuple[int, int] | None,
+    selected_building: str | None,
 ) -> None:
     """Render temporary simulation information in the top-left corner."""
     status = "Running" if simulation.is_running else "Paused"
@@ -26,6 +29,9 @@ def render_hud(
         f"Status: {status}",
         f"Speed: {speed_text}",
         f"Accumulated time: {accumulated_time:.3f}",
+        f"Selected cell: {selected_cell}",
+        f"Hovered cell: {hovered_cell}",
+        f"Selected building: {selected_building}",
     ]
 
     for index, line in enumerate(hud_lines):

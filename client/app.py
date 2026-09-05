@@ -6,8 +6,20 @@ from client.config import TARGET_FPS, WINDOW_SIZE
 from client.scenes.main_menu import MainMenuScene
 from client.scenes.world_scene import WorldScene
 
-from game.logic.core.world import World
 from game.logic.core.simulation import Simulation
+from game.logic.content.game_definitions import GameDefinitions
+from game.logic.core.world import World
+from game.logic.models.inventory_instance import InventoryInstance
+
+
+def create_world() -> World:
+    definitions = GameDefinitions()
+    inventory = InventoryInstance(item_registry=definitions.items)
+
+    return World(
+        definitions=definitions,
+        player_inventory=inventory,
+    )
 
 
 def run() -> None:
@@ -34,6 +46,11 @@ def run() -> None:
                     is_app_running = False
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     is_app_running = False
+                elif event.type == pygame.VIDEORESIZE:
+                    screen = pygame.display.set_mode(
+                        event.size,
+                        pygame.RESIZABLE,
+                    )
 
                 current_scene.handle_event(event)
 
@@ -45,7 +62,7 @@ def run() -> None:
             if action == "exit":
                 is_app_running = False
             elif action == "create_world":
-                world = World()
+                world = create_world()
                 simulation = Simulation(world, is_running=True)
                 current_scene = WorldScene(world, simulation)
             elif action == "settings":

@@ -809,3 +809,107 @@ python3 tools/setup_venv.py
 ```
 
 En Windows se utiliza `py -3 tools\setup_venv.py` y `.venv\Scripts\Activate.ps1`. La carpeta `.venv` no se versiona.
+
+---
+
+## 18. Cierre de la sesión actual
+
+Fecha de referencia: 2026-09-05.
+
+### Corrección conceptual importante
+
+No todo lo que existe en el mundo es un item ni todo es una construcción colocable.
+
+```text
+Entidades generadas por el mundo:
+    ResourceNode
+
+Construcciones colocables en el mapa:
+    Factory
+    SuProducer
+    Mine
+    Warehouse
+    SuHub
+
+Construcciones o instancias internas:
+    Module
+    Machine
+    Container
+```
+
+Los módulos pertenecen a una fábrica y se añaden según los niveles disponibles de la fábrica. No ocupan una celda global independiente.
+
+Los nodos de recursos aparecen mediante la generación del mundo y no se crean desde `PlaceConstructionOrder`.
+
+### Trabajo realizado
+
+- Se creó `ItemStackInstance` con `item_id`, `amount` y `data` opcional.
+- Los stacks comprueban compatibilidad por `item_id` y datos equivalentes.
+- Los stacks no tienen UUID obligatorio; las entidades vivas sí deberán tener identidad propia cuando se formalicen.
+- Se creó `InventoryInstance` basado en slots.
+- El inventario recibe un `Registry[ItemDefinition]` para resolver `max_stack_size`.
+- El inventario puede consultar cantidades, validar espacio, combinar stacks, consumir items, copiarse y acceder a slots.
+- `InventoryPanel` está conectado al inventario y muestra el contenido de cada slot.
+- Se creó `ConstructionType` para diferenciar categorías de construcciones.
+- Se creó `Registry[T]` genérico para definiciones.
+- Se creó `GameDefinitions`, que agrupa los registros de items, máquinas, recetas, módulos y fábricas.
+- `World` conserva una referencia al catálogo completo mediante `definitions`.
+- Se reemplazó la orden específica de fábrica por `PlaceConstructionOrder`, que contiene:
+  - `construction_type`;
+  - `definition_id`;
+  - `cell`;
+  - `order_id`.
+- Se creó `OrderResult` para informar éxito o fallo de una orden.
+- Se creó `OrderSystem` con cola FIFO y procesamiento al inicio del tick.
+- Se creó un registro de handlers en `ConstructionSystem` para separar las reglas comunes de las reglas específicas de cada construcción.
+- Se aisló la creación y el coste de fábricas en `FactoryConstructionHandler`.
+- Se eliminó el mundo de prueba hardcodeado de `App`.
+- `ConstructionMenu` ahora recibe opciones desde `GameDefinitions` en lugar de inventar botones de fábricas, nodos y productores.
+- La UI sigue separada de la lógica: crea órdenes, pero no modifica directamente `World`.
+
+### Flujo actual de construcción
+
+```text
+ConstructionMenu obtiene opciones del catálogo
+→ jugador selecciona una construcción
+→ WorldScene obtiene la celda
+→ crea PlaceConstructionOrder
+→ OrderSystem encola la orden
+→ Simulation procesa la orden en el siguiente tick
+→ ConstructionSystem busca el handler
+→ resuelve la definición
+→ comprueba celda libre
+→ obtiene coste de la definición
+→ comprueba definiciones de items e inventario
+→ consume recursos
+→ crea la instancia mediante el handler
+→ añade la instancia al World
+→ devuelve OrderResult
+```
+
+### Estado actual del contenido
+
+El código ya no crea una fábrica ni items de prueba dentro de `App`. `GameDefinitions` comienza vacío hasta que se registren o carguen definiciones.
+
+Esto es intencional: el siguiente paso será crear el flujo de contenido externo:
+
+```text
+JSON
+→ loader
+→ parser
+→ validator
+→ GameDefinitions
+→ World
+```
+
+Mientras no se carguen definiciones, el menú de construcciones no tendrá opciones reales.
+
+### Pendientes de arquitectura
+
+- Añadir definiciones de `ResourceNode` y `SuProducer`.
+- Registrar handlers para `SuProducer`, `Mine` y `Warehouse` cuando existan sus modelos.
+- Mantener `Module` como construcción interna de una fábrica, con órdenes propias como `AddModuleOrder` y `UpgradeModuleOrder`.
+- Añadir validación explícita del formato de `PlaceConstructionOrder`.
+- Sustituir los `print()` de `OrderSystem` por `GameLog` y resultados visibles en la UI.
+- Dar a cada instancia viva un `instance_id` persistente en lugar de una propiedad que genere un UUID nuevo en cada acceso.
+- Implementar `JsonLoader`, parser y validator sin volver a hardcodear contenido en el cliente.
