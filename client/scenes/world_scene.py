@@ -14,7 +14,7 @@ from client.simulation_clock import SimulationClock
 from client.ui.debug_hud import render_hud
 from client.rendering.grid_renderer import render_grid
 from client.ui.construction_menu import ConstructionMenu
-from client.ui.inventory_panel import InventoryPanel
+from client.ui.player_inventory_panel import InventoryPanel
 from game.logic.orders.place_construction_order import PlaceConstructionOrder
 
 class WorldScene(Scene):

@@ -3,7 +3,6 @@ import uuid
 
 from game.logic.enums.construction_type import ConstructionType
 
-
 @dataclass(frozen=True)
 class PlaceConstructionOrder:
     construction_type: ConstructionType
